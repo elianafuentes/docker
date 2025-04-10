@@ -8,62 +8,50 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 import json
 import os
-import geopandas as gpd 
 
-
+# Función para procesar los datos geográficos (simplificada, solo usa CSV)
 def procesar_datos_geograficos():
-    # Rutas de entrada
-    output_geojson_path = "colombia_educacion.geojson"
-    output_puntos_path = "colombia_educacion_puntos.geojson"
-    
-    # Cargar directamente los archivos GeoJSON existentes
+    # Simplificamos completamente, solo usamos el CSV
     try:
-        print("Intentando cargar archivos GeoJSON directamente...")
+        print("Usando únicamente coordenadas del CSV para visualización...")
         
-        # Verificar que los archivos existen
-        if not os.path.exists(output_geojson_path) or not os.path.exists(output_puntos_path):
-            print(f"ADVERTENCIA: No se encontraron los archivos GeoJSON: {output_geojson_path} o {output_puntos_path}")
+        # Verificar que el archivo CSV existe
+        csv_path = "educacion_superior.csv"
+        if not os.path.exists(csv_path):
+            print(f"ADVERTENCIA: No se encontró el archivo CSV: {csv_path}")
             print(f"Directorio actual: {os.getcwd()}")
             print(f"Archivos en directorio: {os.listdir()}")
             return None
         
-        # Cargar los archivos GeoJSON
-        with open(output_geojson_path, 'r') as f:
-            geojson_data = json.load(f)
-        with open(output_puntos_path, 'r') as f:
-            geojson_puntos = json.load(f)
+        # Cargar los datos del CSV
+        df_educacion = pd.read_csv(csv_path)
         
-        # Intentar identificar la columna de departamentos
-        dept_cols = ['DEPARTAMEN', 'NOMBRE_DEP', 'DPTO', 'NAME_1', 'DEPARTAMENTO', 'NOM_DEPART']
-        dept_col = None
+        # Agregar datos por departamento para visualización
+        estudiantes_por_depto = df_educacion.groupby('Departamento')['Estudiantes'].sum().reset_index()
+        instituciones_por_depto = df_educacion.groupby('Departamento')['ID'].count().reset_index()
+        instituciones_por_depto.rename(columns={'ID': 'NumInstituciones'}, inplace=True)
         
-        for col in dept_cols:
-            if geojson_data['features'] and 'properties' in geojson_data['features'][0] and col in geojson_data['features'][0]['properties']:
-                dept_col = col
-                break
+        # Unir los datos
+        datos_por_depto = pd.merge(estudiantes_por_depto, instituciones_por_depto, on='Departamento')
         
-        # Si no se encuentra la columna específica, usar la primera disponible que parezca adecuada
-        if dept_col is None and geojson_data['features'] and 'properties' in geojson_data['features'][0]:
-            props = geojson_data['features'][0]['properties']
-            for key in props:
-                if any(dept in key.upper() for dept in ['DEPART', 'DPTO', 'NAME']):
-                    dept_col = key
-                    break
+        # Calcular coordenadas centrales por departamento para el mapa coroplético
+        coordenadas_por_depto = df_educacion.groupby('Departamento').agg({
+            'Latitud': 'mean',
+            'Longitud': 'mean'
+        }).reset_index()
         
-        # Si aún no se encontró, usar el primer campo disponible
-        if dept_col is None and geojson_data['features'] and 'properties' in geojson_data['features'][0]:
-            dept_col = list(geojson_data['features'][0]['properties'].keys())[0]
-            
-        print(f"Columna de departamento identificada: {dept_col}")
+        # Unir con los datos agregados
+        datos_completos = pd.merge(datos_por_depto, coordenadas_por_depto, on='Departamento')
+        
+        print(f"Procesamiento completado. Se encontraron {len(datos_completos)} departamentos.")
         
         return {
-            'poligonos': geojson_data,
-            'puntos': geojson_puntos,
-            'dept_col': dept_col
+            'datos_departamentos': datos_completos,
+            'datos_instituciones': df_educacion
         }
     
     except Exception as e:
-        print(f"Error al cargar datos geográficos: {str(e)}")
+        print(f"Error al procesar datos geográficos: {str(e)}")
         import traceback
         traceback.print_exc()
         return None
@@ -71,11 +59,9 @@ def procesar_datos_geograficos():
 # Procesar datos geográficos
 try:
     geo_data = procesar_datos_geograficos()
-    dept_col = geo_data['dept_col'] if geo_data else None
 except Exception as e:
     print(f"Error al inicializar datos geográficos: {str(e)}")
     geo_data = None
-    dept_col = None
 
 # Carga de datos
 df = pd.read_csv('educacion_superior.csv')
@@ -127,89 +113,6 @@ app.layout = html.Div([
                     html.Li('Estudiantes: Cantidad de alumnos matriculados'),
                     html.Li('Institución: Nombre oficial de la entidad educativa')
                 ]),
-        
-        # Tab de Conclusiones (NUEVO)
-        dcc.Tab(label='Conclusiones', children=[
-            html.Div([
-                html.H2('Análisis y Conclusiones del Estudio', 
-                       style={'textAlign': 'center', 'marginTop': '20px', 'color': '#2c3e50'}),
-                
-                html.Div([
-                    html.H3('Distribución por Nivel Educativo', style={'color': '#3498db', 'marginTop': '30px'}),
-                    html.P('El análisis de la distribución de estudiantes por nivel educativo revela un balance relativamente equilibrado '
-                           'entre los cuatro niveles principales de formación en Colombia. Con un 26.8% de estudiantes en programas '
-                           'Tecnológicos, 25.9% en Profesionales, 24.4% en Técnicos y 22.9% en Posgrado, se evidencia una distribución '
-                           'bastante homogénea que sugiere una diversificación en la oferta educativa superior.'),
-                    html.P('La similitud en los porcentajes indica que no hay una concentración desproporcionada en ningún nivel específico, '
-                           'lo que refleja un sistema educativo que atiende diferentes necesidades formativas y perfiles de estudiantes. '
-                           'Este equilibrio podría interpretarse como una respuesta adecuada a las demandas del mercado laboral colombiano, '
-                           'que requiere profesionales con diversos niveles de cualificación.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
-                
-                html.Div([
-                    html.H3('Concentración Geográfica', style={'color': '#3498db', 'marginTop': '10px'}),
-                    html.P('La gráfica de los 10 departamentos con mayor número de estudiantes muestra una marcada concentración en '
-                           'Cundinamarca (que incluye Bogotá D.C.), seguido por Atlántico, Magdalena, Antioquia y Nariño. Esta distribución '
-                           'refleja la centralización histórica de la educación superior en Colombia, principalmente en las grandes '
-                           'áreas metropolitanas y capitales departamentales.'),
-                    html.P('Es notable que los cinco primeros departamentos concentran una proporción significativa del total de estudiantes, '
-                           'evidenciando desigualdades territoriales en el acceso a la educación superior. Esta centralización plantea '
-                           'desafíos importantes para las políticas de descentralización educativa y el acceso equitativo a formación '
-                           'de calidad en regiones menos pobladas o más alejadas de los principales centros urbanos.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
-                
-                html.Div([
-                    html.H3('Concentración Institucional', style={'color': '#3498db', 'marginTop': '10px'}),
-                    html.P('El análisis de las 10 instituciones con mayor número de estudiantes revela que existe una alta concentración '
-                           'en pocas universidades. La Universidad B destaca significativamente con aproximadamente 180,000 estudiantes, '
-                           'seguida por las Universidades C y A con números considerablemente menores.'),
-                    html.P('Esta concentración institucional puede representar tanto ventajas como desventajas para el sistema educativo. '
-                           'Por un lado, permite economías de escala y posiblemente mayor calidad debido a la concentración de recursos; '
-                           'por otro, plantea interrogantes sobre la diversidad de enfoques educativos y la competencia en el sector.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
-                
-                html.Div([
-                    html.H3('Distribución del Tamaño de las Instituciones', style={'color': '#3498db', 'marginTop': '10px'}),
-                    html.P('El histograma de la distribución del número de estudiantes por institución muestra un patrón interesante: '
-                           'existe un pico notable alrededor de los 2,500 estudiantes, indicando que muchas instituciones tienen un '
-                           'tamaño similar en esta categoría.'),
-                    html.P('La distribución presenta una forma relativamente normal con cierta asimetría, lo que sugiere un ecosistema '
-                           'educativo con predominio de instituciones de tamaño mediano, complementadas por algunas muy grandes y varias '
-                           'pequeñas. Esta diversidad de tamaños puede ser positiva para el sistema, ofreciendo distintos entornos de '
-                           'aprendizaje adaptados a diferentes necesidades y contextos.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
-                
-                html.Div([
-                    html.H3('Distribución por Nivel (Box Plot)', style={'color': '#3498db', 'marginTop': '10px'}),
-                    html.P('El box plot que compara la distribución del número de estudiantes por nivel educativo revela que todos los '
-                           'niveles tienen rangos similares, con medianas cercanas a los 2,000-2,500 estudiantes por institución.'),
-                    html.P('No se observan diferencias drásticas entre los niveles en términos de dispersión o valores atípicos, lo que '
-                           'sugiere que la capacidad institucional es relativamente consistente a través de los diferentes tipos de '
-                           'formación. Esto podría indicar que las instituciones que ofrecen diversos niveles educativos mantienen '
-                           'proporciones similares de estudiantes en cada nivel, sin una especialización extrema en un nivel particular.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
-                
-                html.Div([
-                    html.H3('Conclusiones Generales', style={'color': '#3498db', 'marginTop': '10px'}),
-                    html.P('El análisis integral de los datos sobre educación superior en Colombia revela un sistema relativamente '
-                           'balanceado en términos de niveles educativos, pero con marcadas disparidades geográficas e institucionales. '
-                           'Estos hallazgos plantean importantes consideraciones para la formulación de políticas educativas:'),
-                    html.Ul([
-                        html.Li('Necesidad de fortalecer la descentralización educativa para equilibrar la oferta entre departamentos'),
-                        html.Li('Importancia de supervisar la concentración institucional para garantizar calidad y accesibilidad'),
-                        html.Li('Oportunidad para desarrollar políticas que mantengan el balance entre niveles educativos, adaptándolos '
-                                'a las necesidades cambiantes del mercado laboral y la sociedad'),
-                        html.Li('Potencial para implementar estrategias de integración entre diferentes niveles formativos, aprovechando '
-                                'la similitud en sus distribuciones')
-                    ]),
-                    html.P('En síntesis, Colombia muestra un sistema de educación superior diversificado y con potencial de desarrollo, '
-                           'aunque con desafíos importantes en términos de equidad territorial e institucional que requerirán atención '
-                           'prioritaria en las próximas décadas.')
-                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'})
-            ], style={'padding': '20px'})
-        ]),
-                           
-                
             ], style={'padding': '20px', 'backgroundColor': 'white', 'boxShadow': '0px 0px 10px #ddd', 'margin': '20px', 'borderRadius': '5px'})
         ]),
         
@@ -333,7 +236,7 @@ app.layout = html.Div([
             ], style={'textAlign': 'center', 'padding': '20px', 'backgroundColor': '#f2f2f2', 'marginTop': '20px'})
         ]),
         
-        # Tab de Georreferenciación (NUEVO)
+        # Tab de Georreferenciación
         dcc.Tab(label='Georreferenciación', children=[
             html.Div([
                 html.H2('Georreferenciación: Distribución Espacial de Instituciones de Educación Superior', 
@@ -388,9 +291,88 @@ app.layout = html.Div([
                         html.Li('Evaluación de la distancia entre instituciones y centros poblados'),
                         html.Li('Planificación de políticas educativas con enfoque regional')
                     ]),
-                    html.P('Los datos visualizados en este mapa han sido integrados a partir del archivo shapefile de Colombia '
-                           'ubicado en /Users/elianafuentes/Documents/Docker/COLOMBIA/COLOMBIA.shp y la base de datos de educación superior.')
                 ], style={'padding': '20px', 'backgroundColor': 'white', 'boxShadow': '0px 0px 10px #ddd', 'margin': '20px', 'borderRadius': '5px'})
+            ], style={'padding': '20px'})
+        ]),
+        
+        # Tab de Conclusiones
+        dcc.Tab(label='Conclusiones', children=[
+            html.Div([
+                html.H2('Análisis y Conclusiones del Estudio', 
+                       style={'textAlign': 'center', 'marginTop': '20px', 'color': '#2c3e50'}),
+                
+                html.Div([
+                    html.H3('Distribución por Nivel Educativo', style={'color': '#3498db', 'marginTop': '30px'}),
+                    html.P('El análisis de la distribución de estudiantes por nivel educativo revela un balance relativamente equilibrado '
+                           'entre los cuatro niveles principales de formación en Colombia. Con un 26.8% de estudiantes en programas '
+                           'Tecnológicos, 25.9% en Profesionales, 24.4% en Técnicos y 22.9% en Posgrado, se evidencia una distribución '
+                           'bastante homogénea que sugiere una diversificación en la oferta educativa superior.'),
+                    html.P('La similitud en los porcentajes indica que no hay una concentración desproporcionada en ningún nivel específico, '
+                           'lo que refleja un sistema educativo que atiende diferentes necesidades formativas y perfiles de estudiantes. '
+                           'Este equilibrio podría interpretarse como una respuesta adecuada a las demandas del mercado laboral colombiano, '
+                           'que requiere profesionales con diversos niveles de cualificación.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
+                
+                html.Div([
+                    html.H3('Concentración Geográfica', style={'color': '#3498db', 'marginTop': '10px'}),
+                    html.P('La gráfica de los 10 departamentos con mayor número de estudiantes muestra una marcada concentración en '
+                           'Cundinamarca (que incluye Bogotá D.C.), seguido por Atlántico, Magdalena, Antioquia y Nariño. Esta distribución '
+                           'refleja la centralización histórica de la educación superior en Colombia, principalmente en las grandes '
+                           'áreas metropolitanas y capitales departamentales.'),
+                    html.P('Es notable que los cinco primeros departamentos concentran una proporción significativa del total de estudiantes, '
+                           'evidenciando desigualdades territoriales en el acceso a la educación superior. Esta centralización plantea '
+                           'desafíos importantes para las políticas de descentralización educativa y el acceso equitativo a formación '
+                           'de calidad en regiones menos pobladas o más alejadas de los principales centros urbanos.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
+                
+                html.Div([
+                    html.H3('Concentración Institucional', style={'color': '#3498db', 'marginTop': '10px'}),
+                    html.P('El análisis de las 10 instituciones con mayor número de estudiantes revela que existe una alta concentración '
+                           'en pocas universidades. La Universidad B destaca significativamente con aproximadamente 180,000 estudiantes, '
+                           'seguida por las Universidades C y A con números considerablemente menores.'),
+                    html.P('Esta concentración institucional puede representar tanto ventajas como desventajas para el sistema educativo. '
+                           'Por un lado, permite economías de escala y posiblemente mayor calidad debido a la concentración de recursos; '
+                           'por otro, plantea interrogantes sobre la diversidad de enfoques educativos y la competencia en el sector.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
+                
+                html.Div([
+                    html.H3('Distribución del Tamaño de las Instituciones', style={'color': '#3498db', 'marginTop': '10px'}),
+                    html.P('El histograma de la distribución del número de estudiantes por institución muestra un patrón interesante: '
+                           'existe un pico notable alrededor de los 2,500 estudiantes, indicando que muchas instituciones tienen un '
+                           'tamaño similar en esta categoría.'),
+                    html.P('La distribución presenta una forma relativamente normal con cierta asimetría, lo que sugiere un ecosistema '
+                           'educativo con predominio de instituciones de tamaño mediano, complementadas por algunas muy grandes y varias '
+                           'pequeñas. Esta diversidad de tamaños puede ser positiva para el sistema, ofreciendo distintos entornos de '
+                           'aprendizaje adaptados a diferentes necesidades y contextos.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
+                
+                html.Div([
+                    html.H3('Distribución por Nivel (Box Plot)', style={'color': '#3498db', 'marginTop': '10px'}),
+                    html.P('El box plot que compara la distribución del número de estudiantes por nivel educativo revela que todos los '
+                           'niveles tienen rangos similares, con medianas cercanas a los 2,000-2,500 estudiantes por institución.'),
+                    html.P('No se observan diferencias drásticas entre los niveles en términos de dispersión o valores atípicos, lo que '
+                           'sugiere que la capacidad institucional es relativamente consistente a través de los diferentes tipos de '
+                           'formación. Esto podría indicar que las instituciones que ofrecen diversos niveles educativos mantienen '
+                           'proporciones similares de estudiantes en cada nivel, sin una especialización extrema en un nivel particular.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'}),
+                
+                html.Div([
+                    html.H3('Conclusiones Generales', style={'color': '#3498db', 'marginTop': '10px'}),
+                    html.P('El análisis integral de los datos sobre educación superior en Colombia revela un sistema relativamente '
+                           'balanceado en términos de niveles educativos, pero con marcadas disparidades geográficas e institucionales. '
+                           'Estos hallazgos plantean importantes consideraciones para la formulación de políticas educativas:'),
+                    html.Ul([
+                        html.Li('Necesidad de fortalecer la descentralización educativa para equilibrar la oferta entre departamentos'),
+                        html.Li('Importancia de supervisar la concentración institucional para garantizar calidad y accesibilidad'),
+                        html.Li('Oportunidad para desarrollar políticas que mantengan el balance entre niveles educativos, adaptándolos '
+                                'a las necesidades cambiantes del mercado laboral y la sociedad'),
+                        html.Li('Potencial para implementar estrategias de integración entre diferentes niveles formativos, aprovechando '
+                                'la similitud en sus distribuciones')
+                    ]),
+                    html.P('En síntesis, Colombia muestra un sistema de educación superior diversificado y con potencial de desarrollo, '
+                           'aunque con desafíos importantes en términos de equidad territorial e institucional que requerirán atención '
+                           'prioritaria en las próximas décadas.')
+                ], style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px', 'boxShadow': '0px 0px 10px #ddd', 'marginBottom': '20px'})
             ], style={'padding': '20px'})
         ])
     ], style={'marginBottom': '20px'}),
@@ -430,10 +412,11 @@ def actualizar_estado(variable):
     if geo_data is None:
         return html.Div([
             html.H4('Error al procesar datos geográficos', style={'color': '#e74c3c'}),
-            html.P('No se pudo procesar el archivo shapefile. Verifique la ruta: /Users/elianafuentes/Documents/Docker/COLOMBIA/COLOMBIA.shp')
+            html.P('No se pudo cargar el archivo educacion_superior.csv')
         ])
     return ''
 
+# Callback para actualizar el mapa
 @app.callback(
     Output('mapa-colombia', 'figure'),
     [Input('variable-mapa', 'value'),
@@ -458,83 +441,53 @@ def actualizar_mapa(variable, mostrar_instituciones):
     # Iniciar figura
     fig = go.Figure()
     
-    # Añadir capa de departamentos (coroplético)
-    geojson_data = geo_data['poligonos']
-    dept_col = geo_data['dept_col']
-    
-    # Si no se identificó una columna para departamentos, mostrar mensaje
-    if dept_col is None:
-        fig.add_annotation(
-            text="No se pudo identificar la columna para departamentos",
-            xref="paper", yref="paper",
-            x=0.5, y=0.5, showarrow=False,
-            font=dict(size=16, color="#e74c3c")
-        )
-        return fig
+    # Obtener los datos
+    datos_departamentos = geo_data['datos_departamentos']
+    datos_instituciones = geo_data['datos_instituciones']
     
     # Determinar color y título en base a la variable seleccionada
     if variable == 'Estudiantes':
         color_scale = 'Blues'
         titulo = 'Estudiantes por Departamento'
+        z_values = datos_departamentos['Estudiantes']
     else:  # NumInstituciones
         color_scale = 'Greens'
         titulo = 'Número de Instituciones por Departamento'
+        z_values = datos_departamentos['NumInstituciones']
     
-    # Extraer valores de la propiedad para la escala de color
-    values = []
-    locations = []
-    
-    for feature in geojson_data['features']:
-        props = feature.get('properties', {})
-        if variable in props and dept_col in props:
-            values.append(props[variable])
-            locations.append(props[dept_col])
-    
-    # Si no se encontraron datos, mostrar mensaje
-    if not values:
-        fig.add_annotation(
-            text=f"No se encontraron datos para la variable {variable}",
-            xref="paper", yref="paper",
-            x=0.5, y=0.5, showarrow=False,
-            font=dict(size=16, color="#e74c3c")
-        )
-        return fig
-    
-    # Añadir capa coroplética
-    fig.add_choroplethmapbox(
-        geojson=geojson_data,
-        locations=locations,
-        z=values,
-        featureidkey=f'properties.{dept_col}',
+    # Crear mapa de calor para departamentos
+    fig.add_densitymapbox(
+        lat=datos_departamentos['Latitud'],
+        lon=datos_departamentos['Longitud'],
+        z=z_values,
+        radius=50,
         colorscale=color_scale,
-        marker_opacity=0.7,
-        marker_line_width=0.5,
-        colorbar=dict(
-            title=variable,
-            ticksuffix=' ',
-            len=0.7
+        opacity=0.7,
+        hovertext=datos_departamentos.apply(
+            lambda row: f"<b>{row['Departamento']}</b><br>Estudiantes: {row['Estudiantes']}<br>Instituciones: {row['NumInstituciones']}", 
+            axis=1
         ),
-        hovertemplate='<b>%{location}</b><br>' +
-                      f'{variable}: %{{z}}<extra></extra>'
+        hoverinfo='text',
+        name=titulo
     )
     
     # Añadir puntos de instituciones si se selecciona
     if 'mostrar' in mostrar_instituciones:
-        # Añadir puntos de instituciones
         fig.add_scattermapbox(
-            lat=df['Latitud'],
-            lon=df['Longitud'],
+            lat=datos_instituciones['Latitud'],
+            lon=datos_instituciones['Longitud'],
             mode='markers',
             marker=dict(
                 size=8,
                 color='red',
                 opacity=0.7
             ),
-            text=df['Institución'],
+            text=datos_instituciones['Institución'],
             hoverinfo='text',
             hovertemplate='<b>%{text}</b><br>' +
-                          'Estudiantes: ' + df['Estudiantes'].astype(str) + '<br>' +
-                          'Nivel: ' + df['Nivel'] + '<extra></extra>'
+                          'Estudiantes: ' + datos_instituciones['Estudiantes'].astype(str) + '<br>' +
+                          'Nivel: ' + datos_instituciones['Nivel'] + '<extra></extra>',
+            name='Instituciones'
         )
     
     # Actualizar layout
@@ -554,6 +507,7 @@ def actualizar_mapa(variable, mostrar_instituciones):
     )
     
     return fig
+
 # Estilos CSS personalizados
 app.index_string = '''
 <!DOCTYPE html>
