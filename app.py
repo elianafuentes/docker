@@ -11,101 +11,50 @@ import os
 import geopandas as gpd 
 
 
-#Función para procesar los datos geográficos
 def procesar_datos_geograficos():
     # Rutas de entrada
-    # Cambiar la línea de definición de ruta
-    shapefile_path = os.path.join(os.path.dirname(__file__), 'COLOMBIA.shp')
-    csv_path = "educacion_superior.csv"
     output_geojson_path = "colombia_educacion.geojson"
     output_puntos_path = "colombia_educacion_puntos.geojson"
     
-    # Comprobar si los GeoJSON ya existen para no volver a procesarlos
-    if os.path.exists(output_geojson_path) and os.path.exists(output_puntos_path):
-        print("Archivos GeoJSON encontrados. Cargando directamente...")
+    # Cargar directamente los archivos GeoJSON existentes
+    try:
+        print("Intentando cargar archivos GeoJSON directamente...")
+        
+        # Verificar que los archivos existen
+        if not os.path.exists(output_geojson_path) or not os.path.exists(output_puntos_path):
+            print(f"ADVERTENCIA: No se encontraron los archivos GeoJSON: {output_geojson_path} o {output_puntos_path}")
+            print(f"Directorio actual: {os.getcwd()}")
+            print(f"Archivos en directorio: {os.listdir()}")
+            return None
+        
+        # Cargar los archivos GeoJSON
         with open(output_geojson_path, 'r') as f:
             geojson_data = json.load(f)
         with open(output_puntos_path, 'r') as f:
             geojson_puntos = json.load(f)
-            
+        
         # Intentar identificar la columna de departamentos
         dept_cols = ['DEPARTAMEN', 'NOMBRE_DEP', 'DPTO', 'NAME_1', 'DEPARTAMENTO', 'NOM_DEPART']
         dept_col = None
         
         for col in dept_cols:
-            if geojson_data['features'] and col in geojson_data['features'][0]['properties']:
+            if geojson_data['features'] and 'properties' in geojson_data['features'][0] and col in geojson_data['features'][0]['properties']:
                 dept_col = col
                 break
         
-        return {
-            'poligonos': geojson_data,
-            'puntos': geojson_puntos,
-            'dept_col': dept_col
-        }
-    
-    # Si no existen, importamos geopandas y procesamos los archivos
-    try:
-        # Cargar el shapefile
-        gdf_colombia = gpd.read_file(shapefile_path)
-        
-        # Cargar el CSV
-        df_educacion = pd.read_csv(csv_path)
-        
-        # Crear GeoDataFrame de puntos
-        gdf_puntos = gpd.GeoDataFrame(
-            df_educacion, 
-            geometry=gpd.points_from_xy(df_educacion.Longitud, df_educacion.Latitud),
-            crs="EPSG:4326"
-        )
-        
-        # Identificar columna de departamentos
-        dept_col = None
-        posibles_cols = ['DEPARTAMEN', 'NOMBRE_DEP', 'DPTO', 'NAME_1', 'DEPARTAMENTO', 'NOM_DEPART']
-        for col in posibles_cols:
-            if col in gdf_colombia.columns:
-                dept_col = col
-                break
-        
-        if dept_col is None:
-            # Usar la primera columna que parezca contener nombres
-            for col in gdf_colombia.columns:
-                if gdf_colombia[col].dtype == 'object' and gdf_colombia[col].nunique() > 20:
-                    dept_col = col
+        # Si no se encuentra la columna específica, usar la primera disponible que parezca adecuada
+        if dept_col is None and geojson_data['features'] and 'properties' in geojson_data['features'][0]:
+            props = geojson_data['features'][0]['properties']
+            for key in props:
+                if any(dept in key.upper() for dept in ['DEPART', 'DPTO', 'NAME']):
+                    dept_col = key
                     break
         
-        # Convertir a GeoJSON
-        gdf_colombia['id'] = gdf_colombia.index
-        geojson_data = json.loads(gdf_colombia.to_json())
-        geojson_puntos = json.loads(gdf_puntos.to_json())
-        
-        # Agregar datos por departamento
-        if 'Departamento' in df_educacion.columns:
-            # Agregar datos de estudiantes por departamento
-            estudiantes_por_depto = df_educacion.groupby('Departamento')['Estudiantes'].sum().reset_index()
-            instituciones_por_depto = df_educacion.groupby('Departamento')['ID'].count().reset_index()
-            instituciones_por_depto.rename(columns={'ID': 'NumInstituciones'}, inplace=True)
+        # Si aún no se encontró, usar el primer campo disponible
+        if dept_col is None and geojson_data['features'] and 'properties' in geojson_data['features'][0]:
+            dept_col = list(geojson_data['features'][0]['properties'].keys())[0]
             
-            # Unir los datos
-            datos_por_depto = pd.merge(estudiantes_por_depto, instituciones_por_depto, on='Departamento')
-            
-            # Unir datos a las geometrías
-            for feature in geojson_data['features']:
-                dept_name = feature['properties'][dept_col]
-                # Buscar el departamento en los datos agregados
-                match = datos_por_depto[datos_por_depto['Departamento'].str.upper() == dept_name.upper()]
-                if not match.empty:
-                    feature['properties']['Estudiantes'] = int(match['Estudiantes'].values[0])
-                    feature['properties']['NumInstituciones'] = int(match['NumInstituciones'].values[0])
-                else:
-                    feature['properties']['Estudiantes'] = 0
-                    feature['properties']['NumInstituciones'] = 0
-        
-        # Guardar GeoJSON
-        with open(output_geojson_path, 'w') as f:
-            json.dump(geojson_data, f)
-        
-        with open(output_puntos_path, 'w') as f:
-            json.dump(geojson_puntos, f)
+        print(f"Columna de departamento identificada: {dept_col}")
         
         return {
             'poligonos': geojson_data,
@@ -114,7 +63,7 @@ def procesar_datos_geograficos():
         }
     
     except Exception as e:
-        print(f"Error al procesar datos geográficos: {str(e)}")
+        print(f"Error al cargar datos geográficos: {str(e)}")
         import traceback
         traceback.print_exc()
         return None
@@ -485,7 +434,6 @@ def actualizar_estado(variable):
         ])
     return ''
 
-# Callback para actualizar el mapa
 @app.callback(
     Output('mapa-colombia', 'figure'),
     [Input('variable-mapa', 'value'),
@@ -512,6 +460,17 @@ def actualizar_mapa(variable, mostrar_instituciones):
     
     # Añadir capa de departamentos (coroplético)
     geojson_data = geo_data['poligonos']
+    dept_col = geo_data['dept_col']
+    
+    # Si no se identificó una columna para departamentos, mostrar mensaje
+    if dept_col is None:
+        fig.add_annotation(
+            text="No se pudo identificar la columna para departamentos",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5, showarrow=False,
+            font=dict(size=16, color="#e74c3c")
+        )
+        return fig
     
     # Determinar color y título en base a la variable seleccionada
     if variable == 'Estudiantes':
@@ -526,9 +485,20 @@ def actualizar_mapa(variable, mostrar_instituciones):
     locations = []
     
     for feature in geojson_data['features']:
-        if variable in feature['properties'] and dept_col in feature['properties']:
-            values.append(feature['properties'][variable])
-            locations.append(feature['properties'][dept_col])
+        props = feature.get('properties', {})
+        if variable in props and dept_col in props:
+            values.append(props[variable])
+            locations.append(props[dept_col])
+    
+    # Si no se encontraron datos, mostrar mensaje
+    if not values:
+        fig.add_annotation(
+            text=f"No se encontraron datos para la variable {variable}",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5, showarrow=False,
+            font=dict(size=16, color="#e74c3c")
+        )
+        return fig
     
     # Añadir capa coroplética
     fig.add_choroplethmapbox(
@@ -584,7 +554,6 @@ def actualizar_mapa(variable, mostrar_instituciones):
     )
     
     return fig
-
 # Estilos CSS personalizados
 app.index_string = '''
 <!DOCTYPE html>
