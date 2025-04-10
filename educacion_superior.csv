@@ -1,0 +1,201 @@
+ID,Departamento,Latitud,Longitud,Nivel,Estudiantes,Institución
+1,Santander,7.1254,-73.1198,Posgrado,121,Universidad C
+2,Magdalena,10.591,-74.1869,Profesional,4973,Universidad A
+3,Bogotá D.C.,4.711,-74.0721,Posgrado,4322,Universidad C
+4,Atlántico,10.9685,-74.7813,Posgrado,756,Universidad A
+5,Valle del Cauca,3.4516,-76.5319,Técnico,1978,Universidad B
+6,Magdalena,10.591,-74.1869,Profesional,2848,Universidad C
+7,Antioquia,6.2442,-75.5812,Tecnológico,1227,Universidad C
+8,Nariño,1.2136,-77.2811,Profesional,203,Universidad A
+9,Magdalena,10.591,-74.1869,Profesional,79,Universidad A
+10,Magdalena,10.591,-74.1869,Posgrado,3361,Universidad B
+11,Bolívar,10.3997,-75.5144,Técnico,3876,Universidad A
+12,Nariño,1.2136,-77.2811,Técnico,4836,Universidad C
+13,Atlántico,10.9685,-74.7813,Profesional,1924,Universidad B
+14,Córdoba,8.749,-75.8814,Tecnológico,286,Universidad B
+15,Santander,7.1254,-73.1198,Profesional,2235,Universidad B
+16,Nariño,1.2136,-77.2811,Tecnológico,4775,Universidad A
+17,Bolívar,10.3997,-75.5144,Tecnológico,667,Universidad A
+18,Córdoba,8.749,-75.8814,Profesional,1621,Universidad C
+19,Cundinamarca,4.6814,-74.1371,Posgrado,2487,Universidad B
+20,Nariño,1.2136,-77.2811,Posgrado,4505,Universidad B
+21,Cundinamarca,4.6814,-74.1371,Tecnológico,631,Universidad B
+22,Cundinamarca,4.6814,-74.1371,Técnico,2304,Universidad C
+23,Magdalena,10.591,-74.1869,Posgrado,650,Universidad A
+24,Valle del Cauca,3.4516,-76.5319,Posgrado,1028,Universidad B
+25,Magdalena,10.591,-74.1869,Tecnológico,564,Universidad A
+26,Nariño,1.2136,-77.2811,Tecnológico,859,Universidad A
+27,Cundinamarca,4.6814,-74.1371,Tecnológico,2535,Universidad A
+28,Bogotá D.C.,4.711,-74.0721,Posgrado,1496,Universidad A
+29,Bolívar,10.3997,-75.5144,Posgrado,518,Universidad A
+30,Antioquia,6.2442,-75.5812,Técnico,679,Universidad C
+31,Atlántico,10.9685,-74.7813,Técnico,3432,Universidad A
+32,Bolívar,10.3997,-75.5144,Profesional,163,Universidad B
+33,Valle del Cauca,3.4516,-76.5319,Tecnológico,1275,Universidad B
+34,Magdalena,10.591,-74.1869,Posgrado,4392,Universidad B
+35,Atlántico,10.9685,-74.7813,Técnico,1666,Universidad C
+36,Magdalena,10.591,-74.1869,Tecnológico,3367,Universidad A
+37,Santander,7.1254,-73.1198,Tecnológico,4690,Universidad B
+38,Córdoba,8.749,-75.8814,Profesional,2720,Universidad B
+39,Nariño,1.2136,-77.2811,Tecnológico,4863,Universidad B
+40,Antioquia,6.2442,-75.5812,Técnico,4923,Universidad A
+41,Antioquia,6.2442,-75.5812,Profesional,3118,Universidad B
+42,Cundinamarca,4.6814,-74.1371,Posgrado,2587,Universidad A
+43,Córdoba,8.749,-75.8814,Profesional,3224,Universidad B
+44,Atlántico,10.9685,-74.7813,Tecnológico,2687,Universidad B
+45,Bogotá D.C.,4.711,-74.0721,Tecnológico,2272,Universidad A
+46,Cundinamarca,4.6814,-74.1371,Técnico,101,Universidad B
+47,Antioquia,6.2442,-75.5812,Tecnológico,2394,Universidad C
+48,Atlántico,10.9685,-74.7813,Posgrado,2272,Universidad A
+49,Nariño,1.2136,-77.2811,Técnico,4745,Universidad B
+50,Bogotá D.C.,4.711,-74.0721,Tecnológico,4316,Universidad C
+51,Valle del Cauca,3.4516,-76.5319,Posgrado,3158,Universidad C
+52,Bogotá D.C.,4.711,-74.0721,Técnico,1708,Universidad A
+53,Magdalena,10.591,-74.1869,Tecnológico,3607,Universidad B
+54,Bolívar,10.3997,-75.5144,Posgrado,4600,Universidad A
+55,Atlántico,10.9685,-74.7813,Posgrado,4872,Universidad C
+56,Atlántico,10.9685,-74.7813,Profesional,936,Universidad C
+57,Santander,7.1254,-73.1198,Técnico,3103,Universidad A
+58,Antioquia,6.2442,-75.5812,Profesional,2852,Universidad A
+59,Magdalena,10.591,-74.1869,Posgrado,2247,Universidad B
+60,Valle del Cauca,3.4516,-76.5319,Profesional,4060,Universidad C
+61,Magdalena,10.591,-74.1869,Profesional,685,Universidad A
+62,Córdoba,8.749,-75.8814,Profesional,3064,Universidad C
+63,Atlántico,10.9685,-74.7813,Técnico,3935,Universidad A
+64,Cundinamarca,4.6814,-74.1371,Tecnológico,2132,Universidad B
+65,Magdalena,10.591,-74.1869,Profesional,224,Universidad C
+66,Córdoba,8.749,-75.8814,Tecnológico,1106,Universidad B
+67,Cundinamarca,4.6814,-74.1371,Técnico,1798,Universidad B
+68,Bolívar,10.3997,-75.5144,Tecnológico,2812,Universidad C
+69,Santander,7.1254,-73.1198,Técnico,3518,Universidad A
+70,Bogotá D.C.,4.711,-74.0721,Tecnológico,2351,Universidad B
+71,Magdalena,10.591,-74.1869,Técnico,617,Universidad B
+72,Bolívar,10.3997,-75.5144,Posgrado,4468,Universidad C
+73,Bolívar,10.3997,-75.5144,Técnico,1833,Universidad C
+74,Bolívar,10.3997,-75.5144,Tecnológico,2193,Universidad C
+75,Nariño,1.2136,-77.2811,Profesional,4488,Universidad B
+76,Bogotá D.C.,4.711,-74.0721,Posgrado,2290,Universidad A
+77,Magdalena,10.591,-74.1869,Profesional,2608,Universidad A
+78,Antioquia,6.2442,-75.5812,Tecnológico,1524,Universidad C
+79,Magdalena,10.591,-74.1869,Profesional,4152,Universidad B
+80,Bogotá D.C.,4.711,-74.0721,Profesional,379,Universidad B
+81,Atlántico,10.9685,-74.7813,Técnico,4228,Universidad B
+82,Cundinamarca,4.6814,-74.1371,Tecnológico,2723,Universidad C
+83,Antioquia,6.2442,-75.5812,Profesional,4672,Universidad B
+84,Cundinamarca,4.6814,-74.1371,Profesional,939,Universidad B
+85,Valle del Cauca,3.4516,-76.5319,Profesional,811,Universidad A
+86,Antioquia,6.2442,-75.5812,Tecnológico,1073,Universidad C
+87,Valle del Cauca,3.4516,-76.5319,Posgrado,1730,Universidad C
+88,Bolívar,10.3997,-75.5144,Profesional,3306,Universidad C
+89,Córdoba,8.749,-75.8814,Profesional,1111,Universidad B
+90,Valle del Cauca,3.4516,-76.5319,Posgrado,953,Universidad B
+91,Antioquia,6.2442,-75.5812,Posgrado,183,Universidad A
+92,Nariño,1.2136,-77.2811,Posgrado,1175,Universidad C
+93,Córdoba,8.749,-75.8814,Profesional,2014,Universidad B
+94,Córdoba,8.749,-75.8814,Técnico,2089,Universidad A
+95,Nariño,1.2136,-77.2811,Tecnológico,4238,Universidad B
+96,Atlántico,10.9685,-74.7813,Profesional,2899,Universidad B
+97,Cundinamarca,4.6814,-74.1371,Posgrado,3261,Universidad C
+98,Cundinamarca,4.6814,-74.1371,Posgrado,3416,Universidad C
+99,Córdoba,8.749,-75.8814,Posgrado,2961,Universidad B
+100,Valle del Cauca,3.4516,-76.5319,Posgrado,4919,Universidad B
+101,Nariño,1.2136,-77.2811,Técnico,2641,Universidad B
+102,Valle del Cauca,3.4516,-76.5319,Tecnológico,4333,Universidad B
+103,Bogotá D.C.,4.711,-74.0721,Técnico,2233,Universidad B
+104,Antioquia,6.2442,-75.5812,Técnico,4311,Universidad C
+105,Atlántico,10.9685,-74.7813,Tecnológico,3598,Universidad C
+106,Valle del Cauca,3.4516,-76.5319,Profesional,294,Universidad B
+107,Bolívar,10.3997,-75.5144,Profesional,1229,Universidad B
+108,Cundinamarca,4.6814,-74.1371,Técnico,4975,Universidad C
+109,Antioquia,6.2442,-75.5812,Tecnológico,1828,Universidad B
+110,Bolívar,10.3997,-75.5144,Posgrado,2585,Universidad C
+111,Cundinamarca,4.6814,-74.1371,Tecnológico,486,Universidad C
+112,Córdoba,8.749,-75.8814,Profesional,2320,Universidad C
+113,Cundinamarca,4.6814,-74.1371,Técnico,1874,Universidad C
+114,Valle del Cauca,3.4516,-76.5319,Posgrado,843,Universidad A
+115,Valle del Cauca,3.4516,-76.5319,Profesional,4318,Universidad B
+116,Antioquia,6.2442,-75.5812,Posgrado,1330,Universidad B
+117,Magdalena,10.591,-74.1869,Tecnológico,1788,Universidad B
+118,Córdoba,8.749,-75.8814,Tecnológico,499,Universidad C
+119,Bolívar,10.3997,-75.5144,Profesional,2004,Universidad C
+120,Bogotá D.C.,4.711,-74.0721,Profesional,664,Universidad C
+121,Bolívar,10.3997,-75.5144,Posgrado,4371,Universidad B
+122,Antioquia,6.2442,-75.5812,Posgrado,788,Universidad C
+123,Antioquia,6.2442,-75.5812,Tecnológico,1681,Universidad A
+124,Valle del Cauca,3.4516,-76.5319,Técnico,4221,Universidad B
+125,Bogotá D.C.,4.711,-74.0721,Posgrado,3715,Universidad A
+126,Nariño,1.2136,-77.2811,Tecnológico,118,Universidad A
+127,Magdalena,10.591,-74.1869,Técnico,1924,Universidad B
+128,Santander,7.1254,-73.1198,Profesional,919,Universidad A
+129,Bolívar,10.3997,-75.5144,Profesional,1443,Universidad A
+130,Bogotá D.C.,4.711,-74.0721,Posgrado,3520,Universidad C
+131,Magdalena,10.591,-74.1869,Técnico,3241,Universidad A
+132,Antioquia,6.2442,-75.5812,Tecnológico,3169,Universidad C
+133,Córdoba,8.749,-75.8814,Posgrado,2165,Universidad A
+134,Cundinamarca,4.6814,-74.1371,Tecnológico,4015,Universidad B
+135,Nariño,1.2136,-77.2811,Técnico,426,Universidad B
+136,Atlántico,10.9685,-74.7813,Posgrado,2373,Universidad B
+137,Cundinamarca,4.6814,-74.1371,Técnico,2865,Universidad B
+138,Valle del Cauca,3.4516,-76.5319,Técnico,1991,Universidad C
+139,Valle del Cauca,3.4516,-76.5319,Técnico,254,Universidad A
+140,Bolívar,10.3997,-75.5144,Tecnológico,794,Universidad A
+141,Atlántico,10.9685,-74.7813,Profesional,3186,Universidad B
+142,Bolívar,10.3997,-75.5144,Posgrado,1599,Universidad C
+143,Cundinamarca,4.6814,-74.1371,Tecnológico,4470,Universidad C
+144,Bolívar,10.3997,-75.5144,Técnico,2475,Universidad B
+145,Cundinamarca,4.6814,-74.1371,Tecnológico,2914,Universidad A
+146,Antioquia,6.2442,-75.5812,Técnico,4023,Universidad B
+147,Nariño,1.2136,-77.2811,Técnico,4826,Universidad A
+148,Santander,7.1254,-73.1198,Técnico,720,Universidad B
+149,Antioquia,6.2442,-75.5812,Técnico,3467,Universidad A
+150,Bolívar,10.3997,-75.5144,Tecnológico,3115,Universidad C
+151,Bolívar,10.3997,-75.5144,Técnico,1777,Universidad B
+152,Cundinamarca,4.6814,-74.1371,Tecnológico,4076,Universidad A
+153,Córdoba,8.749,-75.8814,Tecnológico,2982,Universidad A
+154,Córdoba,8.749,-75.8814,Profesional,3864,Universidad A
+155,Nariño,1.2136,-77.2811,Tecnológico,1753,Universidad A
+156,Nariño,1.2136,-77.2811,Profesional,3136,Universidad C
+157,Cundinamarca,4.6814,-74.1371,Profesional,3314,Universidad A
+158,Atlántico,10.9685,-74.7813,Profesional,4591,Universidad C
+159,Valle del Cauca,3.4516,-76.5319,Tecnológico,103,Universidad A
+160,Atlántico,10.9685,-74.7813,Profesional,741,Universidad C
+161,Magdalena,10.591,-74.1869,Posgrado,4149,Universidad C
+162,Atlántico,10.9685,-74.7813,Técnico,306,Universidad A
+163,Córdoba,8.749,-75.8814,Tecnológico,3482,Universidad C
+164,Valle del Cauca,3.4516,-76.5319,Técnico,883,Universidad B
+165,Santander,7.1254,-73.1198,Tecnológico,2579,Universidad A
+166,Antioquia,6.2442,-75.5812,Profesional,2946,Universidad B
+167,Valle del Cauca,3.4516,-76.5319,Posgrado,1211,Universidad C
+168,Magdalena,10.591,-74.1869,Profesional,3572,Universidad C
+169,Atlántico,10.9685,-74.7813,Tecnológico,522,Universidad B
+170,Valle del Cauca,3.4516,-76.5319,Profesional,2076,Universidad A
+171,Córdoba,8.749,-75.8814,Posgrado,1687,Universidad B
+172,Antioquia,6.2442,-75.5812,Técnico,3598,Universidad C
+173,Bogotá D.C.,4.711,-74.0721,Técnico,2290,Universidad A
+174,Córdoba,8.749,-75.8814,Profesional,2404,Universidad B
+175,Valle del Cauca,3.4516,-76.5319,Tecnológico,4904,Universidad B
+176,Santander,7.1254,-73.1198,Tecnológico,955,Universidad A
+177,Atlántico,10.9685,-74.7813,Técnico,1233,Universidad B
+178,Cundinamarca,4.6814,-74.1371,Posgrado,2269,Universidad A
+179,Cundinamarca,4.6814,-74.1371,Profesional,3694,Universidad A
+180,Córdoba,8.749,-75.8814,Profesional,1138,Universidad B
+181,Córdoba,8.749,-75.8814,Técnico,1242,Universidad A
+182,Santander,7.1254,-73.1198,Tecnológico,2178,Universidad A
+183,Antioquia,6.2442,-75.5812,Profesional,3501,Universidad C
+184,Magdalena,10.591,-74.1869,Tecnológico,3891,Universidad C
+185,Antioquia,6.2442,-75.5812,Tecnológico,381,Universidad C
+186,Magdalena,10.591,-74.1869,Técnico,1261,Universidad B
+187,Santander,7.1254,-73.1198,Tecnológico,1098,Universidad B
+188,Magdalena,10.591,-74.1869,Posgrado,4138,Universidad B
+189,Bolívar,10.3997,-75.5144,Posgrado,2325,Universidad B
+190,Bolívar,10.3997,-75.5144,Técnico,1684,Universidad A
+191,Valle del Cauca,3.4516,-76.5319,Profesional,3655,Universidad A
+192,Valle del Cauca,3.4516,-76.5319,Tecnológico,552,Universidad C
+193,Cundinamarca,4.6814,-74.1371,Posgrado,3619,Universidad A
+194,Santander,7.1254,-73.1198,Técnico,1129,Universidad B
+195,Santander,7.1254,-73.1198,Técnico,1384,Universidad A
+196,Nariño,1.2136,-77.2811,Tecnológico,4697,Universidad C
+197,Atlántico,10.9685,-74.7813,Técnico,4068,Universidad B
+198,Atlántico,10.9685,-74.7813,Profesional,4266,Universidad A
+199,Valle del Cauca,3.4516,-76.5319,Tecnológico,2123,Universidad C
+200,Atlántico,10.9685,-74.7813,Profesional,4104,Universidad A

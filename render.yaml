@@ -1,0 +1,18 @@
+services:
+  # Un servicio web basado en Docker
+  - type: web
+    name: dashboard-educacion
+    env: docker
+    # Región donde se ejecutará tu servicio (puedes cambiarla)
+    region: oregon
+    # Plan - puedes usar free o standard
+    plan: free
+    # Configuración de compilación y despliegue
+    buildCommand: docker build -t dashboard_educacion .
+    startCommand: docker run -p $PORT:8050 dashboard_educacion
+    # Variables de entorno (si necesitas alguna)
+    envVars:
+      - key: PORT
+        value: 8050
+    # Configuración de salud para verificar que tu aplicación está funcionando
+    healthCheckPath: /
