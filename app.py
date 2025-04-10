@@ -14,7 +14,8 @@ import geopandas as gpd
 #Función para procesar los datos geográficos
 def procesar_datos_geograficos():
     # Rutas de entrada
-    shapefile_path = "/Users/elianafuentes/Documents/Docker/COLOMBIA/COLOMBIA.shp"
+    # Cambiar la línea de definición de ruta
+    shapefile_path = os.path.join(os.path.dirname(__file__), 'COLOMBIA.shp')
     csv_path = "educacion_superior.csv"
     output_geojson_path = "colombia_educacion.geojson"
     output_puntos_path = "colombia_educacion_puntos.geojson"
@@ -668,8 +669,10 @@ app.index_string = '''
     </body>
 </html>
 '''
+server = app.server 
 
 
 # Correr la aplicación
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    port = int(os.environ.get('PORT', 8050))
+    app.run_server(host='0.0.0.0', port=port, debug=True)

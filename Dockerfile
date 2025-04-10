@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 8050
 
 # Comando para ejecutar la aplicación
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8050", "app:server"]
